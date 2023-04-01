@@ -42,8 +42,8 @@ extension ParseCloudable {
         - returns: Returns a `Decodable` type.
         - throws: An error of type `ParseError`.
     */
-    public func runFunction(options: API.Options = []) throws -> ReturnType {
-        try runFunctionCommand().execute(options: options)
+    public func runFunction(signature: String = "", options: API.Options = []) throws -> ReturnType {
+        try runFunctionCommand(signature: signature).execute(options: options)
     }
 
     /**
@@ -53,19 +53,20 @@ extension ParseCloudable {
         - parameter completion: A block that will be called when the Cloud Code completes or fails.
         It should have the following argument signature: `(Result<ReturnType, ParseError>)`.
     */
-    public func runFunction(options: API.Options = [],
+	public func runFunction(signature: String = "", options: API.Options = [],
                             callbackQueue: DispatchQueue = .main,
                             completion: @escaping (Result<ReturnType, ParseError>) -> Void) {
-        runFunctionCommand()
+        runFunctionCommand(signature: signature)
             .executeAsync(options: options, callbackQueue: callbackQueue) { result in
                 completion(result)
             }
     }
 
-    internal func runFunctionCommand() -> API.Command<Self, ReturnType> {
+	internal func runFunctionCommand(signature: String) -> API.Command<Self, ReturnType> {
         API.Command(method: .POST,
                     path: .functions(name: functionJobName),
-                    body: self) { (data) -> ReturnType in
+					params: ["sig": signature],
+					body: self) { (data) -> ReturnType in
             let response = try ParseCoding.jsonDecoder().decode(AnyResultResponse<ReturnType>.self, from: data)
             return response.result
         }

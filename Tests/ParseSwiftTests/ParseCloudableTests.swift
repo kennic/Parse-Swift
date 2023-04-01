@@ -113,7 +113,7 @@ class ParseCloudableTests: XCTestCase { // swiftlint:disable:this type_body_leng
 
     func testCallFunctionCommand() throws {
         let cloud = Cloud(functionJobName: "test")
-        let command = cloud.runFunctionCommand()
+        let command = cloud.runFunctionCommand(signature: "")
         XCTAssertNotNil(command)
         XCTAssertEqual(command.path.urlComponent, "/functions/test")
         XCTAssertEqual(command.method, API.Method.POST)
@@ -123,7 +123,7 @@ class ParseCloudableTests: XCTestCase { // swiftlint:disable:this type_body_leng
 
     func testCallFunctionWithArgsCommand() throws {
         let cloud = Cloud2(functionJobName: "test", customKey: "parse")
-        let command = cloud.runFunctionCommand()
+        let command = cloud.runFunctionCommand(signature: "")
         XCTAssertNotNil(command)
         XCTAssertEqual(command.path.urlComponent, "/functions/test")
         XCTAssertEqual(command.method, API.Method.POST)
