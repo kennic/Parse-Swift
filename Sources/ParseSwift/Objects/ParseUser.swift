@@ -351,7 +351,9 @@ extension ParseUser {
         }
     }
 	
-	public func becomeCurrent(sessionToken: String) throws {
+	public func becomeCurrent(sessionToken: String?) throws {
+		guard let sessionToken, !sessionToken.isEmpty else { throw ParseError(code: .invalidSessionToken, message: "Invalid session token") }
+		
 		if let current = Self.current {
 			if !current.hasSameObjectId(as: self) && self.anonymous.isLinked {
 				Self.deleteCurrentContainerFromKeychain()
