@@ -350,6 +350,20 @@ extension ParseUser {
             }
         }
     }
+	
+	public func becomeCurrent(sessionToken: String) throws {
+		if let current = Self.current {
+			if !current.hasSameObjectId(as: self) && self.anonymous.isLinked {
+				Self.deleteCurrentContainerFromKeychain()
+			}
+		}
+		
+		Self.currentContainer = .init(
+			currentUser: self,
+			sessionToken: sessionToken
+		)
+		Self.saveCurrentContainerToKeychain()
+	}
 
 #if !os(Linux) && !os(Android) && !os(Windows)
     /**
