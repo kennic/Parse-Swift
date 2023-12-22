@@ -113,6 +113,21 @@ struct CurrentUserContainer<T: ParseUser>: Codable, Hashable {
 
 // MARK: Current User Support
 public extension ParseUser {
+	
+	func becomeMe(sessionToken: String) {
+		if let current = Self.current {
+			if !current.hasSameObjectId(as: self) && self.anonymous.isLinked {
+				Self.deleteCurrentContainerFromKeychain()
+			}
+		}
+		
+		Self.currentContainer = .init(
+			currentUser: self,
+			sessionToken: sessionToken
+		)
+		Self.saveCurrentContainerToKeychain()
+	}
+	
     internal static var currentContainer: CurrentUserContainer<Self>? {
         get {
             guard let currentUserInMemory: CurrentUserContainer<Self>
